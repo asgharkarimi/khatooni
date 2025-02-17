@@ -87,10 +87,10 @@ class _AddDriverFormState extends State<AddDriverForm> {
         backgroundColor: Colors.teal,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(4.0),
         child: SingleChildScrollView(
           child: Card(
-            elevation: 5,
+            elevation: 2,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
