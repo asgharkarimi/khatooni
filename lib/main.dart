@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:khatooni/addcar_form.dart';
 
 import 'adddriver_form.dart'; // برای پشتیبانی از محلی‌سازی
 
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
       ],
       home: Directionality( // تنظیم جهت نوشت به RTL
         textDirection: TextDirection.rtl,
-        child: AddDriverForm(),
+        child: AddCarForm(),
       ),
     );
   }
