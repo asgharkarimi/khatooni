@@ -87,22 +87,25 @@ class _AddCargoFormState extends State<AddCargoForm> {
 
       var uri = Uri.parse('http://192.168.188.166/khatoonbar/cargo_api.php');
 
+      // Prepare the data in the required JSON format
+      Map<String, String> requestBody = {
+        'car_id': _selectedCar!['id'].toString(),
+        'driver_id': _selectedDriver!['id'].toString(),
+        'cargo_type_id': _selectedCargoType!['id'].toString(),
+        'origin': _originController.text,
+        'destination': _destinationController.text,
+        'date': _dateController.text,
+        'weight': _weightController.text,
+        'price_per_ton': _pricePerTonController.text,
+        'payment_status_id': _paymentStatusIdController.text,
+        'service_number': _serviceNumberController.text,
+      };
+      print('Generated JSON: ${jsonEncode(requestBody)}');
       try {
         var response = await http.post(
           uri,
           headers: {'Content-Type': 'application/json'},
-          body: jsonEncode({
-            'car_id': _selectedCar!['id'].toString(),
-            'driver_id': _selectedDriver!['id'].toString(),
-            'cargo_type_id': _selectedCargoType!['id'].toString(),
-            'origin': _originController.text,
-            'destination': _destinationController.text,
-            'date': _dateController.text,
-            'weight': _weightController.text,
-            'price_per_ton': _pricePerTonController.text,
-            'payment_status_id': _paymentStatusIdController.text,
-            'service_number': _serviceNumberController.text,
-          }),
+          body: jsonEncode(requestBody), // Encode the data to JSON
         );
 
         if (response.statusCode == 200) {
@@ -186,9 +189,17 @@ class _AddCargoFormState extends State<AddCargoForm> {
         ),
         value: selectedValue,
         items: items.map((item) {
+          // For the driver dropdown, concatenate name and family_name
+          String displayName;
+          if (label == 'راننده') {
+            displayName = '${item['name']} ${item['family_name']}';
+          } else {
+            // For other dropdowns, use the existing logic
+            displayName = item['car_name'] ?? item['name'] ?? item['cargo_type'] ?? 'نامشخص';
+          }
           return DropdownMenuItem<Map<String, dynamic>>(
             value: item,
-            child: Text(item['car_name'] ?? item['name'] ?? item['cargo_type'] ?? 'نامشخص'),
+            child: Text(displayName),
           );
         }).toList(),
         onChanged: onChanged,

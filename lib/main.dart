@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:khatooni/addcar_form.dart';
 import 'package:khatooni/addcargo_form.dart';
-import 'package:khatooni/driver_dropdown.dart';
+import 'package:khatooni/addcustomer_form.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
       ],
       home: Directionality( // تنظیم جهت نوشت به RTL
         textDirection: TextDirection.rtl,
-        child: AddCargoForm(),
+        child: AddCustomerForm(),
       ),
     );
   }
