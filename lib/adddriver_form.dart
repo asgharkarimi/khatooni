@@ -1,8 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
+import 'services/api_service.dart';
+import 'widgets/form_layout.dart';
 
 class AddDriverForm extends StatefulWidget {
   @override
@@ -39,7 +40,7 @@ class _AddDriverFormState extends State<AddDriverForm> {
   // تابع برای ارسال فرم به سرور
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate() && _nationalCardImage != null && _driverLicenseImage != null) {
-      var uri = Uri.parse('http://192.168.188.166/khatoonbar/driver_api.php');
+      var uri = Uri.parse(ApiService.driverApi);
       var request = http.MultipartRequest('POST', uri);
 
       // اضافه کردن فیلدهای متنی
@@ -81,61 +82,32 @@ class _AddDriverFormState extends State<AddDriverForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('ثبت راننده'),
-        backgroundColor: Colors.teal,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: SingleChildScrollView(
-          child: Card(
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildTextFormField('نام', _nameController, 'لطفاً نام را وارد کنید'),
-                    SizedBox(height: 16),
-                    _buildTextFormField('نام خانوادگی', _familyNameController, 'لطفاً نام خانوادگی را وارد کنید'),
-                    SizedBox(height: 16),
-                    _buildTextFormField('کد ملی', _nationalCodeController, 'لطفاً کد ملی را وارد کنید'),
-                    SizedBox(height: 16),
-                    _buildTextFormField('شماره تلفن', _phoneNumberController, 'لطفاً شماره تلفن را وارد کنید'),
-                    SizedBox(height: 16),
-                    _buildPasswordField(),
-                    SizedBox(height: 16),
-                    _buildImageSection('انتخاب عکس کارت ملی', _nationalCardImage, () => _pickImage(ImageSource.gallery, isNationalCard: true)),
-                    SizedBox(height: 16),
-                    _buildImageSection('انتخاب عکس گواهینامه رانندگی', _driverLicenseImage, () => _pickImage(ImageSource.gallery, isNationalCard: false)),
-                    SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: _submitForm,
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white, backgroundColor: Colors.teal,
-                        padding: EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: Text(
-                        'ثبت راننده',
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+    return FormLayout(
+      title: 'ثبت راننده',
+      onSubmit: _submitForm,
+      children: [
+        Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildTextFormField('نام', _nameController, 'لطفاً نام را وارد کنید'),
+              const SizedBox(height: 16),
+              _buildTextFormField('نام خانوادگی', _familyNameController, 'لطفاً نام خانوادگی را وارد کنید'),
+              const SizedBox(height: 16),
+              _buildTextFormField('کد ملی', _nationalCodeController, 'لطفاً کد ملی را وارد کنید'),
+              const SizedBox(height: 16),
+              _buildTextFormField('شماره تلفن', _phoneNumberController, 'لطفاً شماره تلفن را وارد کنید'),
+              const SizedBox(height: 16),
+              _buildPasswordField(),
+              const SizedBox(height: 16),
+              _buildImageSection('انتخاب عکس کارت ملی', _nationalCardImage, () => _pickImage(ImageSource.gallery, isNationalCard: true)),
+              const SizedBox(height: 16),
+              _buildImageSection('انتخاب عکس گواهینامه رانندگی', _driverLicenseImage, () => _pickImage(ImageSource.gallery, isNationalCard: false)),
+            ],
           ),
         ),
-      ),
+      ],
     );
   }
 
@@ -145,8 +117,19 @@ class _AddDriverFormState extends State<AddDriverForm> {
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
+        filled: true,
+        fillColor: Colors.grey[50],
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey[300]!),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey[300]!),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Theme.of(context).primaryColor),
         ),
       ),
       validator: (value) => value!.isEmpty ? validationMessage : null,

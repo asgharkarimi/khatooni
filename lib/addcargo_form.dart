@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:khatooni/widgets/form_layout.dart';
+import 'services/api_service.dart';
 
 class AddCargoForm extends StatefulWidget {
   @override
-  _AddCargoFormState createState() => _AddCargoFormState();
+  State<AddCargoForm> createState() => _AddCargoFormState();
 }
 
 class _AddCargoFormState extends State<AddCargoForm> {
@@ -35,7 +37,7 @@ class _AddCargoFormState extends State<AddCargoForm> {
   }
 
   Future<void> _fetchCars() async {
-    var uri = Uri.parse('http://192.168.188.166/khatoonbar/car_api.php');
+    var uri = Uri.parse(ApiService.carApi);
     try {
       var response = await http.get(uri);
       if (response.statusCode == 200) {
@@ -49,7 +51,7 @@ class _AddCargoFormState extends State<AddCargoForm> {
   }
 
   Future<void> _fetchDrivers() async {
-    var uri = Uri.parse('http://192.168.188.166/khatoonbar/driver_api.php');
+    var uri = Uri.parse(ApiService.driverApi);
     try {
       var response = await http.get(uri);
       if (response.statusCode == 200) {
@@ -63,7 +65,7 @@ class _AddCargoFormState extends State<AddCargoForm> {
   }
 
   Future<void> _fetchCargoTypes() async {
-    var uri = Uri.parse('http://192.168.188.166/khatoonbar/cargo_type_api.php');
+    var uri = Uri.parse(ApiService.cargoTypeApi);
     try {
       var response = await http.get(uri);
       if (response.statusCode == 200) {
@@ -85,7 +87,7 @@ class _AddCargoFormState extends State<AddCargoForm> {
         return;
       }
 
-      var uri = Uri.parse('http://192.168.188.166/khatoonbar/cargo_api.php');
+      var uri = Uri.parse(ApiService.cargoApi);
 
       // Prepare the data in the required JSON format
       Map<String, String> requestBody = {
@@ -127,54 +129,34 @@ class _AddCargoFormState extends State<AddCargoForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text('ثبت بار'), backgroundColor: Colors.teal),
-      body: Padding(
-        padding: const EdgeInsets.all(4.0),
-        child: Form(
+    return FormLayout(
+      title: 'ثبت محموله',
+      onSubmit: _submitForm,
+      children: [
+        Form(
           key: _formKey,
-          child: SingleChildScrollView(
-            child: Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-              elevation: 3,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildDropdownField('ماشین', _cars, _selectedCar, Icons.directions_car, (value) {
-                      setState(() => _selectedCar = value);
-                    }),
-                    _buildDropdownField('راننده', _drivers, _selectedDriver, Icons.person, (value) {
-                      setState(() => _selectedDriver = value);
-                    }),
-                    _buildDropdownField('نوع بار', _cargoTypes, _selectedCargoType, Icons.category, (value) {
-                      setState(() => _selectedCargoType = value);
-                    }),
-                    _buildTextFormField('مبدا', _originController, Icons.location_on),
-                    _buildTextFormField('مقصد', _destinationController, Icons.flag),
-                    _buildTextFormField('تاریخ', _dateController, Icons.calendar_today),
-                    _buildTextFormField('وزن (تن)', _weightController, Icons.scale),
-                    _buildTextFormField('قیمت هر تن', _pricePerTonController, Icons.attach_money),
-                    _buildTextFormField('وضعیت پرداخت', _paymentStatusIdController, Icons.payment),
-                    _buildTextFormField('شماره سرویس', _serviceNumberController, Icons.confirmation_number),
-                    SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: _submitForm,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.teal,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        padding: EdgeInsets.symmetric(vertical: 14),
-                      ),
-                      child: Text('ثبت بار', style: TextStyle(fontSize: 18, color: Colors.white)),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          child: Column(
+            children: [
+              _buildDropdownField('ماشین', _cars, _selectedCar, Icons.directions_car, (value) {
+                setState(() => _selectedCar = value);
+              }),
+              _buildDropdownField('راننده', _drivers, _selectedDriver, Icons.person, (value) {
+                setState(() => _selectedDriver = value);
+              }),
+              _buildDropdownField('نوع بار', _cargoTypes, _selectedCargoType, Icons.category, (value) {
+                setState(() => _selectedCargoType = value);
+              }),
+              _buildTextFormField('مبدا', _originController, Icons.location_on),
+              _buildTextFormField('مقصد', _destinationController, Icons.flag),
+              _buildTextFormField('تاریخ', _dateController, Icons.calendar_today),
+              _buildTextFormField('وزن (کیلوگرم)', _weightController, Icons.scale),
+              _buildTextFormField('قیمت هر تن', _pricePerTonController, Icons.attach_money),
+              _buildTextFormField('وضعیت پرداخت', _paymentStatusIdController, Icons.payment),
+              _buildTextFormField('شماره سرویس', _serviceNumberController, Icons.confirmation_number),
+            ],
           ),
         ),
-      ),
+      ],
     );
   }
 
@@ -183,7 +165,7 @@ class _AddCargoFormState extends State<AddCargoForm> {
       padding: const EdgeInsets.only(bottom: 12.0),
       child: DropdownButtonFormField<Map<String, dynamic>>(
         decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Colors.teal),
+          prefixIcon: Icon(icon, color: Colors.black),
           labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
@@ -213,7 +195,7 @@ class _AddCargoFormState extends State<AddCargoForm> {
       child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Colors.teal),
+          prefixIcon: Icon(icon, color: Colors.black),
           labelText: label,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),

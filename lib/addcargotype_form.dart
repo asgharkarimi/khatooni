@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'services/api_service.dart';
+import 'widgets/form_layout.dart';
 
 class AddCargoTypeForm extends StatefulWidget {
   @override
@@ -16,8 +18,8 @@ class _AddCargoTypeFormState extends State<AddCargoTypeForm> {
     if (_formKey.currentState!.validate()) {
       String cargoType = _cargoTypeController.text;
 
-      // آدرس API
-      var uri = Uri.parse('http://192.168.188.166/khatoonbar/cargo_type_api.php');
+      // Using ApiService for the URL
+      var uri = Uri.parse(ApiService.cargoTypeApi);
 
       // ارسال درخواست POST
       try {
@@ -48,14 +50,11 @@ class _AddCargoTypeFormState extends State<AddCargoTypeForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('ثبت نوع بار'),
-        backgroundColor: Colors.teal,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
+    return FormLayout(
+      title: 'ثبت نوع بار',
+      onSubmit: _submitForm,
+      children: [
+        Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -64,30 +63,19 @@ class _AddCargoTypeFormState extends State<AddCargoTypeForm> {
                 controller: _cargoTypeController,
                 decoration: InputDecoration(
                   labelText: 'نام نوع بار',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) =>
-                value!.isEmpty ? 'لطفاً نام نوع بار را وارد کنید' : null,
-              ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _submitForm,
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.teal,
-                  padding: EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                  filled: true,
+                  fillColor: Colors.grey[50],
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey[300]!),
                   ),
                 ),
-                child: Text(
-                  'ثبت نوع بار',
-                  style: TextStyle(fontSize: 18),
-                ),
+                validator: (value) => value!.isEmpty ? 'لطفاً نام نوع بار را وارد کنید' : null,
               ),
             ],
           ),
         ),
-      ),
+      ],
     );
   }
 }

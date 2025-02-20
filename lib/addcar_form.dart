@@ -1,11 +1,13 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:khatooni/widgets/form_layout.dart';
+import 'package:khatooni/widgets/form_section.dart';
+import 'services/api_service.dart';
 
 class AddCarForm extends StatefulWidget {
   @override
-  _AddCarFormState createState() => _AddCarFormState();
+  State<AddCarForm> createState() => _AddCarFormState();
 }
 
 class _AddCarFormState extends State<AddCarForm> {
@@ -19,8 +21,8 @@ class _AddCarFormState extends State<AddCarForm> {
       String carName = _carNameController.text;
       String plateNumber = _plateNumberController.text;
 
-      // آدرس API
-      var uri = Uri.parse('http://192.168.188.166/khatoonbar/car_api.php');
+      // Using ApiService for the URL
+      var uri = Uri.parse(ApiService.carApi);
 
       // ارسال درخواست POST
       try {
@@ -52,56 +54,55 @@ class _AddCarFormState extends State<AddCarForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('ثبت ماشین'),
-        backgroundColor: Colors.teal,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
+    return FormLayout(
+      title: 'ثبت خودرو جدید',
+      onSubmit: _submitForm,
+      children: [
+        Form(
           key: _formKey,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFormField(
-                controller: _carNameController,
-                decoration: InputDecoration(
-                  labelText: 'نام ماشین',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) =>
-                value!.isEmpty ? 'لطفاً نام ماشین را وارد کنید' : null,
-              ),
-              SizedBox(height: 16),
-              TextFormField(
-                controller: _plateNumberController,
-                decoration: InputDecoration(
-                  labelText: 'پلاک ماشین',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) =>
-                value!.isEmpty ? 'لطفاً پلاک ماشین را وارد کنید' : null,
-              ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: _submitForm,
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.white, backgroundColor: Colors.teal,
-                  padding: EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+              FormSection(
+                title: 'مشخصات خودرو',
+                children: [
+                  TextFormField(
+                    controller: _carNameController,
+                    decoration: const InputDecoration(
+                      labelText: 'نام ماشین',
+                      prefixIcon: Icon(Icons.car_rental),
+                      hintText: 'مثال: کامیون ایسوزو',
+                    ),
+                    validator: (value) =>
+                        value?.isEmpty ?? true ? 'لطفاً نام ماشین را وارد کنید' : null,
                   ),
-                ),
-                child: Text(
-                  'ثبت ماشین',
-                  style: TextStyle(fontSize: 18),
-                ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _plateNumberController,
+                    decoration: const InputDecoration(
+                      labelText: 'شماره پلاک',
+                      prefixIcon: Icon(Icons.numbers),
+                      hintText: 'مثال: 12ع345-78',
+                    ),
+                    validator: (value) =>
+                        value?.isEmpty ?? true ? 'لطفاً شماره پلاک را وارد کنید' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: 'نوع خودرو',
+                      prefixIcon: Icon(Icons.local_shipping),
+                      hintText: 'مثال: کامیون باری',
+                    ),
+                    validator: (value) =>
+                        value?.isEmpty ?? true ? 'لطفاً نوع خودرو را وارد کنید' : null,
+                  ),
+                ],
               ),
             ],
           ),
         ),
-      ),
+      ],
     );
   }
 }

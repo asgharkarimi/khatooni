@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:khatooni/widgets/form_layout.dart';
+import 'package:khatooni/widgets/form_section.dart';
 
 class AddCustomerForm extends StatefulWidget {
   @override
-  _AddCustomerFormState createState() => _AddCustomerFormState();
+  State<AddCustomerForm> createState() => _AddCustomerFormState();
 }
 
 class _AddCustomerFormState extends State<AddCustomerForm> {
@@ -64,63 +66,108 @@ class _AddCustomerFormState extends State<AddCustomerForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('ثبت مشتری جدید'),
-        backgroundColor: Colors.teal,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
+    return FormLayout(
+      title: 'ثبت راننده جدید',
+      onSubmit: _submitForm,
+      children: [
+        Form(
           key: _formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _buildTextFormField('نام', _nameController, Icons.person),
-                _buildTextFormField('نام خانوادگی', _familyNameController, Icons.person_outline),
-                _buildTextFormField('شماره تلفن', _phoneNumberController, Icons.phone),
-                _buildTextFormField('هزینه اجاره', _rentalCostController, Icons.attach_money),
-                _buildTextFormField('قیمت بار', _cargoPriceController, Icons.local_shipping),
-                _buildTextFormField('وضعیت پرداخت', _paymentStatusIdController, Icons.payment),
-                _buildTextFormField('شماره سرویس', _serviceNumberController, Icons.confirmation_number),
-                SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _submitForm,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FormSection(
+                title: 'اطلاعات شخصی',
+                children: [
+                  TextFormField(
+                    controller: _nameController,
+                    decoration: const InputDecoration(
+                      labelText: 'نام',
+                      prefixIcon: Icon(Icons.person),
                     ),
-                    padding: EdgeInsets.symmetric(vertical: 14),
+                    validator: (value) =>
+                        value?.isEmpty ?? true ? 'لطفاً نام را وارد کنید' : null,
                   ),
-                  child: Text('ثبت مشتری', style: TextStyle(fontSize: 18, color: Colors.white)),
-                ),
-              ],
-            ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _familyNameController,
+                    decoration: const InputDecoration(
+                      labelText: 'نام خانوادگی',
+                      prefixIcon: Icon(Icons.person_outline),
+                    ),
+                    validator: (value) =>
+                        value?.isEmpty ?? true ? 'لطفاً نام خانوادگی را وارد کنید' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _phoneNumberController,
+                    decoration: const InputDecoration(
+                      labelText: 'شماره تلفن',
+                      prefixIcon: Icon(Icons.phone),
+                    ),
+                    keyboardType: TextInputType.phone,
+                    validator: (value) =>
+                        value?.isEmpty ?? true ? 'لطفاً شماره تلفن را وارد کنید' : null,
+                  ),
+                ],
+              ),
+              FormSection(
+                title: 'اطلاعات مالی',
+                children: [
+                  TextFormField(
+                    controller: _rentalCostController,
+                    decoration: const InputDecoration(
+                      labelText: 'هزینه اجاره',
+                      prefixIcon: Icon(Icons.attach_money),
+                      suffixText: 'تومان',
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: (value) =>
+                        value?.isEmpty ?? true ? 'لطفاً هزینه اجاره را وارد کنید' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _cargoPriceController,
+                    decoration: const InputDecoration(
+                      labelText: 'قیمت بار',
+                      prefixIcon: Icon(Icons.local_shipping),
+                      suffixText: 'تومان',
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: (value) =>
+                        value?.isEmpty ?? true ? 'لطفاً قیمت بار را وارد کنید' : null,
+                  ),
+                ],
+              ),
+              FormSection(
+                title: 'اطلاعات سرویس',
+                children: [
+                  TextFormField(
+                    controller: _serviceNumberController,
+                    decoration: const InputDecoration(
+                      labelText: 'شماره سرویس',
+                      prefixIcon: Icon(Icons.confirmation_number),
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: (value) =>
+                        value?.isEmpty ?? true ? 'لطفاً شماره سرویس را وارد کنید' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _paymentStatusIdController,
+                    decoration: const InputDecoration(
+                      labelText: 'وضعیت پرداخت',
+                      prefixIcon: Icon(Icons.payment),
+                    ),
+                    keyboardType: TextInputType.number,
+                    validator: (value) =>
+                        value?.isEmpty ?? true ? 'لطفاً وضعیت پرداخت را وارد کنید' : null,
+                  ),
+                ],
+              ),
+            ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildTextFormField(String label, TextEditingController controller, IconData icon) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          prefixIcon: Icon(icon, color: Colors.teal),
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        ),
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'لطفاً این فیلد را پر کنید';
-          }
-          return null;
-        },
-      ),
+      ],
     );
   }
 }
